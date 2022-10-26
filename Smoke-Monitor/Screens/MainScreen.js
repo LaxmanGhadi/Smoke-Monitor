@@ -1,130 +1,83 @@
 import { StyleSheet, Text, View, SafeAreaView, Image } from "react-native";
 import React from "react";
-// import "react-native-gesture-handler";
-import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { LinearGradient } from "expo-linear-gradient";
-import {
-    FontAwesome
-  } from "@expo/vector-icons";
-// import { createNativeStackNavigator } from "@react-navigation/native-stack";
-
-// const Stack = createNativeStackNavigator();
-const MainScreen = () => {
+import { FontAwesome ,MaterialCommunityIcons} from "@expo/vector-icons";
+import HomeScreen from "./HomeScreen";
+import Profile from "./Profile";
+const Tab = createBottomTabNavigator();
+const MainScreen = ({navigation,route}) => {
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        backgroundColor: "#282828",
-        width: "100%",
-        flexDirection: "column",
-        alignItems: "center",
+    <Tab.Navigator
+      initialRouteName="feed"
+      screenOptions={{
+        tabBarStyle: {
+          height: 60,
+          backgroundColor: "#090A0B",
+          borderTopColor: "#090A0B",
+          stopAnimation: "false",
+        },
+      }}
+      tabBarOptions={{
+        activeTintColor: "#fff",
       }}
     >
-      <View style={{ padding: 50 }}>
-        <Text style={{ fontSize: 32, fontWeight: "500", color: "#E48457" }}>
-          Fire Protect
-        </Text>
-      </View>
-
-      <View
-        style={{
-          height: 240,
-          width: "94%",
-          //   backgroundColor: "rgba(20,20,20,0.7)",
-          flexDirection: "column",
-          justifyContent: "flex-start",
-          margin: 10,
-          justifyContent: "space-evenly",
-          elevation: 1,
-          shadowColor: "#000",
-          shadowOffset: { width: -2, height: 4 },
-          shadowOpacity: 1,
-          shadowRadius: 3,
+      <Tab.Screen
+        name="Fire Protect"
+        component={HomeScreen}
+        initialParams={{
+          userDetails: route.params.userDetails,
         }}
-      >
-        <LinearGradient
-          style={{
-            flex: 1,
-            padding: 20,
-            borderRadius: 20,
-          }}
-          colors={["#404040", "#252525", "#121212"]}
-        >
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-            }}
-          >
-            <Image
-              style={{ width: 20, height: 20, resizeMode: "contain" }}
-              source={require("../assets/house-icon.png")}
-            />
-            <Text style={{ fontSize: 20, fontWeight: "500", color: "#fff" }}>
-                Home
-            </Text>
-          </View>
+        options={{
+          tabBarLabel: "",
+          headerStyle: {
+            backgroundColor: "#282828",
+            height: 120,
+            borderBottomEndRadius:0,
+            borderBottomColor:"#000"
+          },
+          headerTitleStyle: {
+            fontWeight: "bold",
+            fontSize: 27,
+            fontWeight: "200",
+            color: "#E48457",
+            marginLeft: 20,
+          },
+            tabBarLabelStyle: { fontSize :15 ,fontWeight: "470",
+           },
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="home" color={color} size={23.5} />
+          ),
+        }}
+      />
 
-          <View
-            style={{
-              flexDirection: "column",
-              justifyContent: "space-around",
-            }}
-          >
-            <Text style={{ fontSize: 50, color: "#fff" }}>07:17 AM</Text>
-            <Text
-              style={{
-                fontSize: 20,
-                fontWeight: "300",
-                color: "#fff",
-              }}
-            >
-              10/08/2022
-            </Text>
-          </View>
-
-          <View style={styles.Line}>
-            <Image
-              style={{
-                width: 33,
-                height: 33,
-                resizeMode: "contain",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-              source={require("../assets/snowflake.png")}
-            />
-            <Text style={{ color: "#fff", fontSize: 20, paddingLeft: 7 }}>
-              19"C
-            </Text>
-          </View>
-          <View style={styles.Line}>
-            <Image
-              style={{
-                width: 30,
-                height: 30,
-                resizeMode: "contain",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-              source={require("../assets/humidity.png")}
-            />
-            <Text style={{ color: "#fff", fontSize: 20, paddingLeft: 7 }}>
-              27
-            </Text>
-          </View>
-        </LinearGradient>
-      </View>
-
-      <View style={{ width: "84%", height: 1, backgroundColor: "black",marginTop:10,marginBottom:20 }} ></View>
-
-
-      <View style={styles.Boxes} >
-
-      <FontAwesome name="thumbs-up" color={"#E48457"} size={32} />
-      </View>
-      
-    </SafeAreaView>
+      <Tab.Screen
+        name="Profile"
+        component={Profile}
+        initialParams={{
+          userDetails: route.params.userDetails,
+        }}
+        options={{
+          tabBarLabel: "",
+          headerStyle: {
+            backgroundColor: "#090A0B",
+            height: 120,
+          },
+          headerTitleStyle: {
+            fontWeight: "bold",
+            fontSize: 27,
+            fontWeight: "200",
+            color: "#fff",
+            marginLeft: 20,
+          },
+          //   tabBarLabelStyle: { fontSize :15 ,fontWeight: "470",
+          //  },
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="home" color={color} size={23.5} />
+          ),
+        }}
+      />
+    </Tab.Navigator>
   );
 };
 

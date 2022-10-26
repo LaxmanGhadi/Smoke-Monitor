@@ -12,12 +12,12 @@ import { StackActions } from "@react-navigation/native";
 import { ActivityIndicator } from "react-native-paper";
 import { ToastAndroid } from "react-native";
 import { Alert } from "react-native";
-
 import { getDatabase, ref, child, get } from "firebase/database";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { initializeApp } from "firebase/app";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { firebaseConfig } from "../firebaseApi";
 
-const Login = ({ navigation,route }) => {
+const SignIn = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -27,7 +27,7 @@ const Login = ({ navigation,route }) => {
   const handleLogin = () => {
     const app =  initializeApp(firebaseConfig)
     const auth = getAuth();
-    createUserWithEmailAndPassword(auth, email, password)
+    signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         // Signed in
         const User = userCredential.user;
@@ -97,7 +97,7 @@ const Login = ({ navigation,route }) => {
                 paddingTop: 70,
               }}
             >
-              Welcome
+              Sign IN
             </Text>
             <TextInput
               mode="outlined"
@@ -134,15 +134,18 @@ const Login = ({ navigation,route }) => {
                 borderWidth: 0,
               }}
             />
-
-            <Button 
+            <Button
               mode="contained"
               onPress={() => {
-                navigation.navigate('SignIn')
+                navigation.navigate("LogIn");
               }}
-              style={{ alignSelf: "center", marginTop: 20,backgroundColor:"rgba(0,0,0,0)", }}
+              style={{
+                alignSelf: "center",
+                marginTop: 20,
+                backgroundColor: "rgba(0,0,0,0)",
+              }}
             >
-              Already have an account? SignIn
+              Don't have an account ? SignIn
             </Button>
           </View>
           {!loading ? (
@@ -179,7 +182,7 @@ const Login = ({ navigation,route }) => {
   );
 };
 
-export default Login;
+export default SignIn;
 
 const styles = StyleSheet.create({
   container: {
