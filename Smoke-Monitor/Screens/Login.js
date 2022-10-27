@@ -12,12 +12,13 @@ import { StackActions } from "@react-navigation/native";
 import { ActivityIndicator } from "react-native-paper";
 import { ToastAndroid } from "react-native";
 import { Alert } from "react-native";
+import { initializeApp } from "firebase/app";
 
 import { getDatabase, ref, child, get } from "firebase/database";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { firebaseConfig } from "../firebaseApi";
 
-const Login = ({ navigation,route }) => {
+const Login = ({ navigation, route }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -25,7 +26,7 @@ const Login = ({ navigation,route }) => {
   const [loading, setLoading] = useState(false);
 
   const handleLogin = () => {
-    const app =  initializeApp(firebaseConfig)
+    const app = initializeApp(firebaseConfig);
     const auth = getAuth();
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
@@ -135,12 +136,16 @@ const Login = ({ navigation,route }) => {
               }}
             />
 
-            <Button 
+            <Button
               mode="contained"
               onPress={() => {
-                navigation.navigate('SignIn')
+                navigation.navigate("SignIn");
               }}
-              style={{ alignSelf: "center", marginTop: 20,backgroundColor:"rgba(0,0,0,0)", }}
+              style={{
+                alignSelf: "center",
+                marginTop: 20,
+                backgroundColor: "rgba(0,0,0,0)",
+              }}
             >
               Already have an account? SignIn
             </Button>

@@ -1,20 +1,77 @@
 import { StyleSheet, Text, View, SafeAreaView, Image } from "react-native";
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 // import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import {
-    FontAwesome
-  } from "@expo/vector-icons";
-// import { createNativeStackNavigator } from "@react-navigation/native-stack";
- 
+import { FontAwesome } from "@expo/vector-icons";
+import * as Notifications from "expo-notifications";
+import { Button, Platform } from "react-native";
+import * as Device from "expo-device";
+import { getDatabase, ref, onValue } from "firebase/database";
 
+// import { createNativeStackNavigator } from "@react-navigation/native-stack";
+//async () => {
+//   await sendPushNotification(expoPushToken);
+// }
 // const Stack = createNativeStackNavigator();
-const data = [50, 10, 40, 95, -4, -24, 85, 91, 35, 53, -53, 24, 50, -20, -80]
+const data = [50, 10, 40, 95, -4, -24, 85, 91, 35, 53, -53, 24, 50, -20, -80];
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
 
 const HomeScreen = () => {
+  const [expoPushToken, setExpoPushToken] = useState("");
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
+  const responseListener = useRef();
+  const [fire, setFire] = useState(0);
+  const db = getDatabase();
+
+  useEffect(() => {
+    registerForPushNotificationsAsync().then((token) =>
+      setExpoPushToken(token)
+    );
+
+    // This listener is fired whenever a notification is received while the app is foregrounded
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        setNotification(notification);
+      });
+
+    // This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        console.log(response);
+      });
+
+    const starCountRef = ref(db, "smoke-level");
+    onValue(starCountRef, (snapshot) => {
+      const data = snapshot.val();
+      console.log(data);
+      // async () => {
+      //   await
+      // };
+
+      sendPushNotification(expoPushToken, data);
+      // setFire(data);
+      // if (data != fire) {
+      // }
+    });
+
+    return () => {
+      Notifications.removeNotificationSubscription(
+        notificationListener.current
+      );
+      Notifications.removeNotificationSubscription(responseListener.current);
+    };
+  }, []);
+
   return (
-    
     <SafeAreaView
       style={{
         flex: 1,
@@ -24,8 +81,6 @@ const HomeScreen = () => {
         alignItems: "center",
       }}
     >
-      
-
       <View
         style={{
           height: 240,
@@ -61,7 +116,7 @@ const HomeScreen = () => {
               source={require("../assets/house-icon.png")}
             />
             <Text style={{ fontSize: 20, fontWeight: "500", color: "#fff" }}>
-                Home
+              Home
             </Text>
           </View>
 
@@ -101,17 +156,85 @@ const HomeScreen = () => {
         </LinearGradient>
       </View>
 
-      <View style={{ width: "84%", height: 1, backgroundColor: "black",marginTop:10,marginBottom:20 }} ></View>
+      <View
+        style={{
+          width: "84%",
+          height: 1,
+          backgroundColor: "black",
+          marginTop: 10,
+          marginBottom: 20,
+        }}
+      ></View>
 
-
-      <View style={styles.Boxes} >
-
-      
-      <FontAwesome name="thumbs-up" color={"#E48457"} size={32} />
+      <View style={styles.Boxes}>
+        <FontAwesome name="thumbs-up" color={"#E48457"} size={32} />
       </View>
-      
     </SafeAreaView>
   );
+
+  // Can use this function below, OR use Expo's Push Notification Tool-> https://expo.dev/notifications
+  async function sendPushNotification(expoPushToken, data) {
+    let message = {};
+    if (data === 0) {
+      message = {
+        to: expoPushToken,
+        sound: "default",
+        title: "No Fire Detected",
+        body: `Everything Looks good`,
+        data: { someData: "goes here" },
+      };
+    } else {
+      message = {
+        to: expoPushToken,
+        sound: "default",
+        title: "⚠Fire Alert⚠",
+        body: `Fire in the ${data}`,
+        data: { someData: "goes here" },
+      };
+    }
+
+    await fetch("https://exp.host/--/api/v2/push/send", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Accept-encoding": "gzip, deflate",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(message),
+    });
+  }
+
+  async function registerForPushNotificationsAsync() {
+    let token;
+    if (Device.isDevice) {
+      const { status: existingStatus } =
+        await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== "granted") {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== "granted") {
+        alert("Failed to get push token for push notification!");
+        return;
+      }
+      token = (await Notifications.getExpoPushTokenAsync()).data;
+      console.log(token);
+    } else {
+      alert("Must use physical device for Push Notifications");
+    }
+
+    if (Platform.OS === "android") {
+      Notifications.setNotificationChannelAsync("default", {
+        name: "default",
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: "#FF231F7C",
+      });
+    }
+
+    return token;
+  }
 };
 
 export default HomeScreen;

@@ -6,25 +6,26 @@ import SignIn from "./Screens/SignIn";
 import React, { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { initializeApp } from "firebase/app";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-
   const [userDetails, setUserDetails] = useState(null);
-
 
   return (
     <NavigationContainer style={styles.container}>
       <Stack.Navigator>
         <Stack.Screen name="LogIn" component={Login}></Stack.Screen>
         <Stack.Screen name="SignIn" component={SignIn}></Stack.Screen>
-        <Stack.Screen name="MainScreen" component={MainScreen}
-        initialParams = {{
-          userDetails :userDetails,
-        }}
-        options={{ headerShown: false }}></Stack.Screen>
-       
+        <Stack.Screen
+          name="MainScreen"
+          component={MainScreen}
+          initialParams={{
+            userDetails: userDetails,
+          }}
+          options={{ headerShown: false }}
+        ></Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
   );
