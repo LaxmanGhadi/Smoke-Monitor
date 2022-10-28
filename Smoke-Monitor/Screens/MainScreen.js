@@ -19,7 +19,7 @@ const MainScreen = ({navigation,route}) => {
         },
       }}
       tabBarOptions={{
-        activeTintColor: "#fff",
+        activeTintColor: "#E48457",
       }}
     >
       <Tab.Screen
@@ -73,7 +73,7 @@ const MainScreen = ({navigation,route}) => {
           //   tabBarLabelStyle: { fontSize :15 ,fontWeight: "470",
           //  },
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="home" color={color} size={23.5} />
+            <FontAwesome name="user" color={color} size={23.5} />
           ),
         }}
       />

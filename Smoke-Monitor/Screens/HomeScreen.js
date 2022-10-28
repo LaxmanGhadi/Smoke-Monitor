@@ -1,13 +1,17 @@
 import { StyleSheet, Text, View, SafeAreaView, Image } from "react-native";
 import React, { useState, useRef, useEffect } from "react";
 // import "react-native-gesture-handler";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, StackActions } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { FontAwesome } from "@expo/vector-icons";
 import * as Notifications from "expo-notifications";
-import { Button, Platform } from "react-native";
+import { IconButton } from "react-native-paper";
+import { Platform } from "react-native";
 import * as Device from "expo-device";
 import { getDatabase, ref, onValue } from "firebase/database";
+import { getAuth } from "firebase/auth";
+import NoFire from "../Components/NoFire";
+import SmokeDetected from "../Components/SmokeDetected";
 
 // import { createNativeStackNavigator } from "@react-navigation/native-stack";
 //async () => {
@@ -31,6 +35,20 @@ const HomeScreen = () => {
   const responseListener = useRef();
   const [fire, setFire] = useState(0);
   const db = getDatabase();
+  const auth = getAuth();
+  const handleLogOut = async () => {
+    try {
+
+      await auth.signOut();
+      NavigationContainer.dispatch(StackActions.replace("LogIn",{}));
+      console.log("Logged out")
+    }
+    catch (e){
+      console.log(e)
+    }
+
+
+  };
 
   useEffect(() => {
     registerForPushNotificationsAsync().then((token) =>
@@ -79,11 +97,34 @@ const HomeScreen = () => {
         width: "100%",
         flexDirection: "column",
         alignItems: "center",
+        paddingTop: 50,
+        paddingBottom: 10,
       }}
     >
       <View
         style={{
-          height: 240,
+          height: 150,
+          width: "90%",
+          // backgroundColor: "#146",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems:"flex-start",
+          paddingTop:29,
+        }}
+      >
+        <Text style={{fontSize:32,fontWeight:"500",color:"#E48457"}}>Fire Protect</Text>
+
+        <IconButton
+          icon="logout"
+          iconColor="#E48457"
+          size={20}
+          onPress={() => handleLogOut()}
+        />
+      </View>
+
+      <View
+        style={{
+          height: 205,
           width: "94%",
           //   backgroundColor: "rgba(20,20,20,0.7)",
           flexDirection: "column",
@@ -115,7 +156,7 @@ const HomeScreen = () => {
               style={{ width: 20, height: 20, resizeMode: "contain" }}
               source={require("../assets/house-icon.png")}
             />
-            <Text style={{ fontSize: 20, fontWeight: "500", color: "#fff" }}>
+            <Text style={{ fontSize: 20, fontWeight: "500", color: "#fff",paddingLeft:10 }}>
               Home
             </Text>
           </View>
@@ -132,6 +173,7 @@ const HomeScreen = () => {
                 fontSize: 20,
                 fontWeight: "300",
                 color: "#fff",
+                height:30
               }}
             >
               10/08/2022
@@ -147,7 +189,7 @@ const HomeScreen = () => {
                 justifyContent: "center",
                 alignItems: "center",
               }}
-              source={require("../assets/humidity.png")}
+              source={require("../assets/smokeDetector.png")}
             />
             <Text style={{ color: "#fff", fontSize: 20, paddingLeft: 7 }}>
               Everything looks great
@@ -164,10 +206,12 @@ const HomeScreen = () => {
           marginTop: 10,
           marginBottom: 20,
         }}
-      ></View>
+      >
+        
+      </View>
 
       <View style={styles.Boxes}>
-        <FontAwesome name="thumbs-up" color={"#E48457"} size={32} />
+        <NoFire></NoFire>
       </View>
     </SafeAreaView>
   );
@@ -246,10 +290,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   Boxes: {
-    height: 500,
-    width: 500,
+    height: 220,
+    width: "93%",
     backgroundColor: "rgba(20,20,20,0.7)",
     borderRadius: 20,
-    margin: 20,
   },
 });

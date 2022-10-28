@@ -78,12 +78,12 @@ const Login = ({ navigation, route }) => {
         >
           <View
             style={{
-              // borderColor: "#000",
-              // borderWidth: 2,
+              borderColor: "#E48457",
+              borderWidth: 1.4,
               width: "80%",
               height: 370,
               borderRadius: 10,
-              backgroundColor: "rgba(225,225,225,1)",
+              backgroundColor: "rgba(20,20,20,1)",
               display: "flex",
               flexDirection: "column",
             }}
@@ -96,6 +96,7 @@ const Login = ({ navigation, route }) => {
                 textTransform: "uppercase",
                 padding: 20,
                 paddingTop: 70,
+                color:"#fff"
               }}
             >
               Welcome
@@ -110,7 +111,7 @@ const Login = ({ navigation, route }) => {
                 alignSelf: "center",
                 margin: 10,
                 marginBottom: 40,
-                backgroundColor: "rgba(170,170,170,1)",
+                backgroundColor: "rgba(180,180,180,1)",
               }}
             />
             <TextInput
@@ -133,6 +134,7 @@ const Login = ({ navigation, route }) => {
                 alignSelf: "center",
                 backgroundColor: "rgba(180,180,180,1)",
                 borderWidth: 0,
+                
               }}
             />
 
@@ -189,7 +191,7 @@ export default Login;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#rgba(30,30,30,1)",
     alignItems: "center",
     justifyContent: "center",
   },

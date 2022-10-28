@@ -7,20 +7,36 @@ import React, { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { initializeApp } from "firebase/app";
+import HomeScreen from "./Screens/HomeScreen";
+import SplashScreen from "./Screens/SplashScreen";
+import { Colors } from "react-native/Libraries/NewAppScreen";
 
 const Stack = createNativeStackNavigator();
 
-export default function App() {
+export default function App({}) {
   const [userDetails, setUserDetails] = useState(null);
 
   return (
     <NavigationContainer style={styles.container}>
-      <Stack.Navigator>
-        <Stack.Screen name="LogIn" component={Login}></Stack.Screen>
+      <Stack.Navigator initialRouteName="Splash">
+        {/* <Stack.Screen name ="Splash" component={SplashScreen}
+         initialParams={{
+          userDetails: userDetails,
+          setUserDetails: setUserDetails,
+        }}
+        options={{ headerShown: false }}/> */}
+        <Stack.Screen name="LogIn" component={Login}
+        options= {{
+          title :"Fire Protect",
+          backgroundColor:"#191919",
+          
+          
+        }}
+        ></Stack.Screen>
         <Stack.Screen name="SignIn" component={SignIn}></Stack.Screen>
         <Stack.Screen
           name="MainScreen"
-          component={MainScreen}
+          component={HomeScreen}
           initialParams={{
             userDetails: userDetails,
           }}
