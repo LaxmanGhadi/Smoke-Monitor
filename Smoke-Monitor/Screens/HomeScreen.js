@@ -104,7 +104,7 @@ const HomeScreen = ({ navigation }) => {
       minutes = minutes < 10 ? "0" + minutes : minutes;
       var strTime = hours + ":" + minutes + " " + ampm;
       setTime(strTime);
-    }, 1000);
+    }, 5000);
   }, []);
   return (
     <SafeAreaView
