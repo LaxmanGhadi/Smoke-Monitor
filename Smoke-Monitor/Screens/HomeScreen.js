@@ -28,9 +28,12 @@ Notifications.setNotificationHandler({
   }),
 });
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }) => {
   const [expoPushToken, setExpoPushToken] = useState("");
   const [notification, setNotification] = useState(false);
+  const [datee, setDatee] = useState(0);
+  const [time, setTime] = useState(0);
+
   const notificationListener = useRef();
   const responseListener = useRef();
   const [fire, setFire] = useState(0);
@@ -38,16 +41,12 @@ const HomeScreen = () => {
   const auth = getAuth();
   const handleLogOut = async () => {
     try {
-
       await auth.signOut();
-      NavigationContainer.dispatch(StackActions.replace("LogIn",{}));
-      console.log("Logged out")
+      navigation.dispatch(StackActions.replace("SignIn", {}));
+      console.log("Logged out");
+    } catch (e) {
+      console.log(e);
     }
-    catch (e){
-      console.log(e)
-    }
-
-
   };
 
   useEffect(() => {
@@ -76,7 +75,7 @@ const HomeScreen = () => {
       // };
 
       sendPushNotification(expoPushToken, data);
-      // setFire(data);
+      setFire(data);
       // if (data != fire) {
       // }
     });
@@ -88,12 +87,30 @@ const HomeScreen = () => {
       Notifications.removeNotificationSubscription(responseListener.current);
     };
   }, []);
+  useEffect(() => {
+    setInterval(() => {
+      var today = new Date();
+      var dd = String(today.getDate()).padStart(2, "0");
+      var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
+      var yyyy = today.getFullYear();
 
+      let current_date = mm + "/" + dd + "/" + yyyy;
+      setDatee(current_date);
+      var hours = today.getHours();
+      var minutes = today.getMinutes();
+      var ampm = hours >= 12 ? "pm" : "am";
+      hours = hours % 12;
+      hours = hours ? hours : 12; // the hour '0' should be '12'
+      minutes = minutes < 10 ? "0" + minutes : minutes;
+      var strTime = hours + ":" + minutes + " " + ampm;
+      setTime(strTime);
+    }, 1000);
+  }, []);
   return (
     <SafeAreaView
       style={{
         flex: 1,
-        backgroundColor: "#282828",
+        backgroundColor: fire ? "red" : "#282828",
         width: "100%",
         flexDirection: "column",
         alignItems: "center",
@@ -108,15 +125,23 @@ const HomeScreen = () => {
           // backgroundColor: "#146",
           flexDirection: "row",
           justifyContent: "space-between",
-          alignItems:"flex-start",
-          paddingTop:29,
+          alignItems: "flex-start",
+          paddingTop: 29,
         }}
       >
-        <Text style={{fontSize:32,fontWeight:"500",color:"#E48457"}}>Fire Protect</Text>
+        <Text
+          style={{
+            fontSize: 32,
+            fontWeight: "500",
+            color: fire ? "#fff" : "#E48457",
+          }}
+        >
+          Fire Protect
+        </Text>
 
         <IconButton
           icon="logout"
-          iconColor="#E48457"
+          iconColor={fire ? "#fff" : "#E48457"}
           size={20}
           onPress={() => handleLogOut()}
         />
@@ -156,7 +181,14 @@ const HomeScreen = () => {
               style={{ width: 20, height: 20, resizeMode: "contain" }}
               source={require("../assets/house-icon.png")}
             />
-            <Text style={{ fontSize: 20, fontWeight: "500", color: "#fff",paddingLeft:10 }}>
+            <Text
+              style={{
+                fontSize: 20,
+                fontWeight: "500",
+                color: "#fff",
+                paddingLeft: 10,
+              }}
+            >
               Home
             </Text>
           </View>
@@ -167,16 +199,24 @@ const HomeScreen = () => {
               justifyContent: "space-around",
             }}
           >
-            <Text style={{ fontSize: 50, color: "#fff" }}>07:17 AM</Text>
+            <Text
+              style={{
+                fontSize: 50,
+                color: "#fff",
+                textTransform: "uppercase",
+              }}
+            >
+              {time}
+            </Text>
             <Text
               style={{
                 fontSize: 20,
                 fontWeight: "300",
                 color: "#fff",
-                height:30
+                height: 30,
               }}
             >
-              10/08/2022
+              {datee}
             </Text>
           </View>
 
@@ -191,9 +231,22 @@ const HomeScreen = () => {
               }}
               source={require("../assets/smokeDetector.png")}
             />
-            <Text style={{ color: "#fff", fontSize: 20, paddingLeft: 7 }}>
-              Everything looks great
-            </Text>
+            {fire == 0 ? (
+              <Text style={{ color: "#fff", fontSize: 20, paddingLeft: 7 }}>
+                Everything looks great
+              </Text>
+            ) : (
+              <Text
+                style={{
+                  color: "red",
+                  fontSize: 25,
+                  paddingLeft: 7,
+                  fontWeight: "bold",
+                }}
+              >
+                ⚠⚠⚠ Fire Alert ⚠⚠⚠
+              </Text>
+            )}
           </View>
         </LinearGradient>
       </View>
@@ -206,13 +259,9 @@ const HomeScreen = () => {
           marginTop: 10,
           marginBottom: 20,
         }}
-      >
-        
-      </View>
+      ></View>
 
-      <View style={styles.Boxes}>
-        <NoFire></NoFire>
-      </View>
+      <View style={styles.Boxes}>{fire ? <SmokeDetected /> : <NoFire />}</View>
     </SafeAreaView>
   );
 

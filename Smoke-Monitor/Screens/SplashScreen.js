@@ -6,7 +6,7 @@ import { firebaseConfig } from "../firebaseApi";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { get, getDatabase } from "firebase/database";
 
-const SplashScreen = (navigation, route) => {
+const SplashScreen = ({ navigation, route }) => {
   const app = initializeApp(firebaseConfig);
   const auth = getAuth();
   const ref = React.useRef(false);
@@ -61,7 +61,7 @@ const SplashScreen = (navigation, route) => {
   }, []);
 
   return (
-    <View>
+    <View s>
       <Text>Welcome</Text>
     </View>
   );
